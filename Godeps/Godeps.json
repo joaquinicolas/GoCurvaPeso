@@ -1,0 +1,18 @@
+{
+	"ImportPath": "github.com/GoCurvaPeso3/src/github.com/GoCurvaPeso",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v74",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/denisenkom/go-mssqldb",
+			"Rev": "c5885153c18c8e4cdde7608f3fa65c2df212d3cb"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/md4",
+			"Rev": "10c26747e67d76ad4fafe6087c6f4073c3b22942"
+		}
+	]
+}
