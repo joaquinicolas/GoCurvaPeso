@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/GoCurvaPeso3/src/github.com/GoCurvaPeso",
+	"ImportPath": "github.com/GoCurvaPeso3/src/github.com/joaquinicolas/GoCurvaPeso",
 	"GoVersion": "go1.6",
 	"GodepVersion": "v74",
 	"Packages": [
