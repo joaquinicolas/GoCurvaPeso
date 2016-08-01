@@ -17,7 +17,7 @@ func main() {
 func pesosHandler(w http.ResponseWriter,r *http.Request)  {
 	w.Header().Add("Access-Control-Allow-Origin","*")
 	w.Header().Set("Content-Type","application/json")
-	url_id := r.URL.Query().Get("Id")
+	url_id := r.URL.Query().Get("id")
 	if  url_id!= ""{
 		id,err := strconv.Atoi(url_id)
 		if err != nil {

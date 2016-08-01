@@ -2,18 +2,21 @@
  * Created by joaquin on 24/07/16.
  */
 var minValue;
-var server = "http://localhost:8080/pesos?Id="
+var maxValue;
+var data
+var server = "http://localhost:8080/pesos?id="
+
 document.addEventListener("DOMContentLoaded", function(event) {
     queryString(getCurvaDatos)
 });
 
 function getCurvaDatos(queryString) {
-    server += queryString.Id
+    server += queryString.id
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if(xhttp.readyState == 4 && xhttp.status == 200){
             var rows = xhttp.response
-            google.charts.load('current',{'packages':['line']})
+            google.charts.load("visualization",{'packages':['line']})
             google.charts.setOnLoadCallback(function () {
                 rows = JSON.parse(rows.replace("<nil>",""))
                 drawChart(rows)
@@ -24,64 +27,124 @@ function getCurvaDatos(queryString) {
     xhttp.send()
 }
 
+Date.prototype.addDays = function (days) {
+    var dat = new Date(this.valueOf())
+    dat.setDate(dat.getDate() + days)
+    return dat
+}
+
+/**
+ * Dibuja el grafico
+ * @param mData
+ */
+
 function drawChart(mData) {
-    var data = new google.visualization.DataTable();
-    data.addColumn('date','Fecha')
-    data.addColumn('number','Peso')
+    data = new google.visualization.DataTable();
+    data.addColumn('number','Dias')
     data.addColumn('number','70kg')
     data.addColumn('number','80kg')
     data.addColumn('number','90kg')
     data.addColumn('number','100kg')
     data.addColumn('number','110kg')
     data.addColumn('number','120kg')
+    data.addColumn('number','Peso')
+    getCurva(mData[0].Weight,calcularDiasNecesarios,mData)
+}
 
-    minValue = mData[0].Weight;
-    data_array = [];
-    for (var i = mData.length - 1 ; i >= 0; i--){
-        if (minValue > mData[i].Weight) minValue = mData[i].Weight;
-        var parts = mData[i].Dates.substring(0,10).split('-')
+/**
+ * Calcula el peso mas proximo al ingresado inicialmente por el usuario. Ej: para 169 seria 120
+ * @param pesoActual peso inicial ingresado por el usuario
+ * @returns {number}
+ */
+function getCurva(pesoActual,callback,mData) {
+    debugger
+var curva = 0;
+    if (pesoActual < 100){
+        if (pesoActual > 90){
+           curva = 90
+        }else if(pesoActual > 80){
+            curva = 80
+        }else{
+            curva = 70
+        }
+
+    }else {
+        if (pesoActual < 110){
+            curva = 100
+        }else if (pesoActual < 120){
+                curva = 110
+        }else{
+            curva = 120
+        }
+    }
+
+    callback(curva,mData,function (diasNecesarios,mData) {
+        newData = [];
+
+        for (var x = 0; x < diasNecesarios; x++){
+            newData.push(
+                [x,(mData[0].Weight - (0.07 * x)),(mData[0].Weight - (0.08 * x)),(mData[0].Weight - (0.1 * x)),(mData[0].Weight - (0.11 * x)),(mData[0].Weight - (0.114 * x)),(mData[0].Weight - (0.142 * x)),
+                    (mData[x] != undefined ? mData[x].Weight : null)]
+            )
+
+        }
+
+        data.addRows(newData)
+        var options = {
+
+            width: 860,
+            height: 500
+        };
+
+
+        var chart = new google.charts.Line(document.getElementById('linechart_material'))
+        chart.draw(data,options);
+    })
+}
+
+/**
+ * Calcula los dias necesarios para alcanzar el final de la curva o peso ideal
+ * @param pesoIdeal
+ * @param pesoInicial
+ * @returns {number}
+ */
+function calcularDiasNecesarios(pesoIdeal,mData,callback) {
+    switch (pesoIdeal){
+        case 70:
+            callback ((mData[0].Weight - pesoIdeal) / 0.07,mData)
+            break;
+        case 80:
+            callback ((mData[0].Weight - pesoIdeal) / 0.08,mData)
+            break;
+        case 90:
+            callback ((mData[0].Weight - pesoIdeal) / 0.1,mData)
+            break;
+        case 100:
+            callback ((mData[0].Weight - pesoIdeal) / 0.11,mData)
+            break;
+        case 110:
+            callback ((mData[0].Weight - pesoIdeal) / 0.114,mData)
+            break;
+        case 120:
+            callback ((mData[0].Weight - pesoIdeal) / 0.142,mData)
+            break;
+    }
+}
+
+function getmDataByFecha(dateToSearch,mData) {
+
+
+    for(var x = 0; x < mData.length; x++){
+        var parts = mData[x].Dates.substring(0,10).split('-')
         var dt =
             new Date(parts[1] + " /" + parts[2] + "/" + parts[0])
-        data_array.push([dt,mData[i].Weight,(mData[i].Weight - .500),(mData[i].Weight - .600),(mData[i].Weight - .700),(mData[i].Weight - .800),(mData[i].Weight - .900),(mData[i].Weight - 1)])
+        if (dt.getDate() == dateToSearch.getDate() && dt.getMonth() == dateToSearch.getMonth()){
+                return mData[x]
+        }
     }
-    data.addRows(data_array)
-    var options = {
-        chart: {
-            title: 'Curva de peso Dr.Cormillot',
-            subtitle: 'Referencia de perdida de peso'
-        },
-        width: 900,
-        height: 500
-    };
 
 
-    var chart = new google.charts.Line(document.getElementById('linechart_material'))
-    chart.draw(data,options);
-
-  /*  var data = new google.visualization.DataTable();
-    data.addColumn('date','Fecha')
-    data.addColumn('number','Peso')
-    data.addColumn('number','70kg')
-    data.addColumn('number','80kg')
-    data.addColumn('number','90kg')
-    data.addColumn('number','100kg')
-    data.addColumn('number','110kg')
-    data.addColumn('number','120kg')
-
-    data.addRows([[1,  37.8, 80.8, 41.8]])
-
-    var options = {
-        chart: {
-            title: 'Box Office Earnings in First Two Weeks of Opening',
-            subtitle: 'in millions of dollars (USD)'
-        },
-        width: 900,
-        height: 500
-    };
-
-    var chart = new google.charts.Line(document.getElementById('linechart_material'));
-
-    chart.draw(data, options);*/
+    return null;
 }
 
 function queryString(callback) {
