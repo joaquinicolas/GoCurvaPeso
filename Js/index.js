@@ -79,25 +79,32 @@ var curva = 0;
     }
 
     callback(curva,mData,function (diasNecesarios,mData) {
-        newData = [];
+        newData = new Array(Math.floor(diasNecesarios))
+        var dias = Math.floor(diasNecesarios)
+        for (var x = 0; x < dias; x++){
 
-        for (var x = 0; x < diasNecesarios; x++){
-            newData.push(
-                [x,(mData[0].Weight - (0.07 * x)),(mData[0].Weight - (0.08 * x)),(mData[0].Weight - (0.1 * x)),(mData[0].Weight - (0.11 * x)),(mData[0].Weight - (0.114 * x)),(mData[0].Weight - (0.142 * x)),
-                    (mData[x] != undefined ? mData[x].Weight : null)]
-            )
+            newData[x] = [x,((0.07 * x)),((0.08 * x)),((0.1 * x)),((0.11 * x)),((0.114 * x)),((0.142 * x)),
+                (mData[x] != undefined  ? x > 0 ? (mData[x - 1] - mData[x].Weight): 0 : null)]
 
         }
 
+        newData.sort(function (a,b) {
+            return b-a;
+        })
         data.addRows(newData)
-        var options = {
 
-            width: 860,
-            height: 500
-        };
+        var options ={curveType: "function",
+            width: 1600, height: 800,
+            vAxis: {maxValue: 0, format: '0'}
+            /*axes: {
+                x: {
+                    0: {side: 'top'}
+                }
+            }*/};
 
 
         var chart = new google.charts.Line(document.getElementById('linechart_material'))
+        data.sort({column: 1, desc: true});
         chart.draw(data,options);
     })
 }
