@@ -4,7 +4,7 @@ import(
 
 	"net/http"
 	"strconv"
-	"github.com/GoCurvaPeso3/src/github.com/joaquinicolas/GoCurvaPeso/Repository"
+	"github.com/joaquinicolas/GoCurvaPeso/Repository"
 	"encoding/json"
 )
 
