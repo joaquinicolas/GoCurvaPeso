@@ -95,7 +95,9 @@ var curva = 0;
 
         var options ={curveType: "function",
             width: 1600, height: 800,
-            vAxis: {maxValue: 0, format: '0'}
+            vAxis: {
+                title: 'Population (millions)'
+            }
             /*axes: {
                 x: {
                     0: {side: 'top'}
