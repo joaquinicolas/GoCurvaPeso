@@ -4,7 +4,7 @@
 var minValue;
 var maxValue;
 var data
-var server = "http://localhost:8080/pesos?id="
+var server = "http://clinicaonline.com.ar:8080/pesos?id="
 
 document.addEventListener("DOMContentLoaded", function(event) {
     queryString(getCurvaDatos)
@@ -84,7 +84,7 @@ var curva = 0;
         for (var x = 0; x < dias; x++){
 
             newData[x] = [x,((0.07 * x)),((0.08 * x)),((0.1 * x)),((0.11 * x)),((0.114 * x)),((0.142 * x)),
-                (mData[x] != undefined  ? x > 0 ? (mData[x - 1] - mData[x].Weight): 0 : null)]
+                (mData[x] != undefined  ? x > 0 ? (mData[0].Weight - mData[x].Weight): 0 : null)]
 
         }
 

@@ -6,6 +6,7 @@ import(
 	"strconv"
 	"github.com/joaquinicolas/GoCurvaPeso/Repository"
 	"encoding/json"
+	"log"
 )
 
 func main() {
@@ -23,9 +24,14 @@ func pesosHandler(w http.ResponseWriter,r *http.Request)  {
 		if err != nil {
 			panic(err)
 		}
+		defer r.Body.Close()
 		result := Repository.GetCurvaPeso(id)
 		w.WriteHeader(http.StatusOK)
 		jData,err := json.Marshal(result)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer r.Body.Close()
 		w.Write(jData)
 	}
 
