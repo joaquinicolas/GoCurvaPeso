@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 function getCurvaDatos(queryString) {
-    server += queryString.id
+    server += queryString.id || queryString.Id
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if(xhttp.readyState == 4 && xhttp.status == 200){
@@ -79,18 +79,26 @@ var curva = 0;
     }
 
     callback(curva,mData,function (diasNecesarios,mData) {
-        newData = new Array(Math.floor(diasNecesarios))
+        newData = new Array(mData.length )
         var dias = Math.floor(diasNecesarios)
-        for (var x = 0; x < dias; x++){
-
-            newData[x] = [x,((0.07 * x)),((0.08 * x)),((0.1 * x)),((0.11 * x)),((0.114 * x)),((0.142 * x)),
-                (mData[x] != undefined  ? x > 0 ? (mData[0].Weight - mData[x].Weight): 0 : null)]
-
+        var days = (new Date(mData[mData.length - 1].Dates) - new Date(mData[0].Dates))/(1000*60*60*24)
+       for (var x = 0; x < mData.length; x++){
+            if(mData[x] != null){
+             var diff = x > 0 ? (new Date(mData[x].Dates) - new Date(mData[x - 1].Dates)) / (1000*60*60*24) : 0
+             var day = (new Date(mData[x].Dates) - new Date(mData[0].Dates) )/(1000*24*60*60)
+              
+              newData[x] = [day,((0.07 * day)),((0.08 * day)),((0.1 * day)),((0.11 * day)),((0.114 * day)),((0.142 * day)),
+                (
+                mData[x] != undefined ?
+                  (mData[0].Weight - mData[x].Weight)
+                : null)]
+                            
+                            
+            }
+            
         }
 
-        newData.sort(function (a,b) {
-            return b-a;
-        })
+       
         data.addRows(newData)
 
         var options ={curveType: "function",
@@ -106,7 +114,6 @@ var curva = 0;
 
 
         var chart = new google.charts.Line(document.getElementById('linechart_material'))
-        data.sort({column: 1, desc: true});
         chart.draw(data,options);
     })
 }
